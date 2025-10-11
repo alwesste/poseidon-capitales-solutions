@@ -1,17 +1,24 @@
 package com.nnk.springboot.domain;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 
 
 @Entity
 @Table(name = "rating")
 public class Rating {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     Integer id;
+
+    @NotBlank(message = "moodyRating is mandatory")
     String moodysRating;
+    @NotBlank(message = "S&P Rating is mandatory")
     String sandPRating;
+    @NotBlank(message = "fitchRating is mandatory")
     String fitchRating;
+    @NotNull(message = "orderNumber is mandatory")
     Integer orderNumber;
 
     public Rating() {
