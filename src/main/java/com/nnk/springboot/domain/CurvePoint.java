@@ -1,6 +1,10 @@
 package com.nnk.springboot.domain;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.DecimalMin;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.Size;
 
 
 import java.sql.Timestamp;
@@ -10,22 +14,36 @@ import java.sql.Timestamp;
 @Table(name = "curvepoint")
 public class CurvePoint {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    Integer id;
-    Integer curveId;
-    Timestamp asOfDate;
-    Double term;
-    Double value;
-    Timestamp creationDate;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer id;
+
+    @Column(name = "curveId")
+    private Integer curveId;
+
+    @Column(name = "asOfDate")
+    private Timestamp asOfDate;
+
+    @NotNull(message = "Term is mandatory")
+    @Positive(message = "Value must be greater than 0")
+    private Double term;
+
+    @NotNull(message = "Value is mandatory")
+    @Positive(message = "Term must be greater than 0")
+    private Double value;
+
+
+    @Column(name = "creationDate")
+    private Timestamp creationDate;
 
     public CurvePoint() {
     }
 
-    public CurvePoint(Integer curveId, Double value, Double term) {
+    public CurvePoint(Integer curveId, Double term, Double value) {
         this.curveId = curveId;
-        this.value = value;
         this.term = term;
+        this.value = value;
     }
+
 
     public Integer getId() {
         return id;

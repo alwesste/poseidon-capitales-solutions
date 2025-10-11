@@ -2,6 +2,8 @@ package com.nnk.springboot.domain;
 
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 
 import java.sql.Timestamp;
 
@@ -10,9 +12,11 @@ import java.sql.Timestamp;
 @Table(name = "trade")
 public class Trade {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     Integer tradeId;
+    @NotBlank
     String account;
+    @NotBlank
     String type;
     Double buyQuantity;
     Double sellQuantity;

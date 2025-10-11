@@ -1,19 +1,24 @@
 package com.nnk.springboot.domain;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 
 
-import java.sql.Date;
 import java.sql.Timestamp;
 
 @Entity
 @Table(name = "bidlist")
 public class BidList {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "bidListId")
     Integer bidListId;
+    @NotBlank
     String account;
+    @NotBlank
     String type;
+    @NotNull
     Double bidQuantity;
     Double askQuantity;
     Double bid;
@@ -217,5 +222,33 @@ public class BidList {
 
     public void setSide(String side) {
         this.side = side;
+    }
+
+    @Override
+    public String toString() {
+        return "BidList{" +
+                "bidListId=" + bidListId +
+                ", account='" + account + '\'' +
+                ", type='" + type + '\'' +
+                ", bidQuantity=" + bidQuantity +
+                ", askQuantity=" + askQuantity +
+                ", bid=" + bid +
+                ", ask=" + ask +
+                ", benchmark='" + benchmark + '\'' +
+                ", bidListDate=" + bidListDate +
+                ", commentary='" + commentary + '\'' +
+                ", security='" + security + '\'' +
+                ", status='" + status + '\'' +
+                ", trader='" + trader + '\'' +
+                ", book='" + book + '\'' +
+                ", creationName='" + creationName + '\'' +
+                ", creationDate=" + creationDate +
+                ", revisionName='" + revisionName + '\'' +
+                ", revisionDate=" + revisionDate +
+                ", dealName='" + dealName + '\'' +
+                ", dealType='" + dealType + '\'' +
+                ", sourceListId='" + sourceListId + '\'' +
+                ", side='" + side + '\'' +
+                '}';
     }
 }
