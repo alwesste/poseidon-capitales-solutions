@@ -67,9 +67,9 @@ public class RatingControllerTest {
         mockMvc.perform(get("/rating/update/{id}", 1))
                 .andExpect(status().isOk())
                 .andExpect(view().name("rating/update"))
-                .andExpect(model().attribute("rating", hasProperty("moodysRating", is(10))))
-                .andExpect(model().attribute("rating", hasProperty("sandPRating", is(9))))
-                .andExpect(model().attribute("rating", hasProperty("fitchRating", is(7))))
+                .andExpect(model().attribute("rating", hasProperty("moodysRating", is("10"))))
+                .andExpect(model().attribute("rating", hasProperty("sandPRating", is("9"))))
+                .andExpect(model().attribute("rating", hasProperty("fitchRating", is("7"))))
                 .andExpect(model().attribute("rating", hasProperty("orderNumber", is(4))));
     }
 
@@ -87,9 +87,9 @@ public class RatingControllerTest {
                 .andExpect(redirectedUrl("/rating/list"));
 
         Rating updatedRating = ratingRepository.findById(2).orElseThrow();
-        assertEquals(9, updatedRating.getMoodysRating());
-        assertEquals(10, updatedRating.getSandPRating());
-        assertEquals(4, updatedRating.getFitchRating());
+        assertEquals("9", updatedRating.getMoodysRating());
+        assertEquals("10", updatedRating.getSandPRating());
+        assertEquals("4", updatedRating.getFitchRating());
         assertEquals(3, updatedRating.getOrderNumber());
     }
 
