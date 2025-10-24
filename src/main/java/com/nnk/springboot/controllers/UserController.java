@@ -1,11 +1,12 @@
 package com.nnk.springboot.controllers;
 
 import com.nnk.springboot.domain.User;
-import com.nnk.springboot.repositories.UserRepository;
 import com.nnk.springboot.services.UserService;
+import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -16,7 +17,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 
 @Controller
+@Transactional
 public class UserController {
+
+    private static final Logger logger = LogManager.getLogger(UserController.class);
+
     @Autowired
     private UserService userService;
 
@@ -34,14 +39,20 @@ public class UserController {
 
     @PostMapping("/user/validate")
     public String validate(@Valid User user, BindingResult result, Model model) {
-        if (!result.hasErrors()) {
-            BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
-            user.setPassword(encoder.encode(user.getPassword()));
-            userService.save(user);
-            model.addAttribute("users", userService.findAll());
-            return "redirect:/user/list";
+        if (result.hasErrors()) {
+            logger.warn("Erreurs de validation pour l'utilisateur {}: {}",
+                    user.getUsername(), result.getAllErrors());
+            return "user/add";
         }
-        return "user/add";
+        try {
+            userService.save(user);
+            logger.info("Utilisateur créé avec succès: {}", user.getUsername());
+            return "redirect:/user/list";
+
+        } catch (Exception e) {
+            logger.error("Erreur lors de la sauvegarde de l'utilisateur", e);
+            return "user/add";
+        }
     }
 
     @GetMapping("/user/update/{id}")
@@ -58,9 +69,6 @@ public class UserController {
         if (result.hasErrors()) {
             return "user/update";
         }
-
-        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
-        user.setPassword(encoder.encode(user.getPassword()));
         user.setId(id);
         userService.save(user);
         model.addAttribute("users", userService.findAll());
