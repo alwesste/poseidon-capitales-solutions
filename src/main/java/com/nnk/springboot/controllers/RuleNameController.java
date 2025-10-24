@@ -3,6 +3,8 @@ package com.nnk.springboot.controllers;
 import com.nnk.springboot.domain.RuleName;
 import com.nnk.springboot.services.RuleNameService;
 import jakarta.validation.Valid;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
@@ -16,6 +18,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
 public class RuleNameController {
+
+    private static final Logger logger = LogManager.getLogger(RuleNameController.class);
+
     @Autowired
     private RuleNameService ruleNameService;
 
@@ -33,11 +38,13 @@ public class RuleNameController {
 
     @PostMapping("/ruleName/validate")
     public String validate(@Valid RuleName ruleName, BindingResult result, Model model) {
-        if (!result.hasErrors()) {
-            ruleNameService.save(ruleName);
-            return "redirect:/ruleName/list";
+        if (result.hasErrors()) {
+            logger.warn("Erreurs lors de la validation de RuleName {}: {}",
+                    ruleName.getName(), result.getAllErrors());
+            return "ruleName/add";
         }
-        return "ruleName/add";
+        ruleNameService.save(ruleName);
+        return "redirect:/ruleName/list";
     }
 
     @GetMapping("/ruleName/update/{id}")
@@ -51,18 +58,21 @@ public class RuleNameController {
     public String updateRuleName(@PathVariable("id") Integer id, @Valid RuleName ruleName,
                                  BindingResult result, Model model) {
 
-        if (!result.hasErrors()) {
-            RuleName newRuleName = ruleNameService.findById(id);
-            newRuleName.setName(ruleName.getName());
-            newRuleName.setDescription(ruleName.getDescription());
-            newRuleName.setJson(ruleName.getJson());
-            newRuleName.setTemplate(ruleName.getTemplate());
-            newRuleName.setSqlStr(ruleName.getSqlStr());
-            newRuleName.setSqlPart(ruleName.getSqlPart());
-            ruleNameService.save(newRuleName);
-            return "redirect:/ruleName/list";
+        if (result.hasErrors()) {
+            logger.warn("Erreurs dans la mise a jour du rulename {} : {}",
+                    ruleName.getName(), result.getAllErrors());
+            return "ruleName/update";
         }
-        return "ruleName/update";
+
+        RuleName newRuleName = ruleNameService.findById(id);
+        newRuleName.setName(ruleName.getName());
+        newRuleName.setDescription(ruleName.getDescription());
+        newRuleName.setJson(ruleName.getJson());
+        newRuleName.setTemplate(ruleName.getTemplate());
+        newRuleName.setSqlStr(ruleName.getSqlStr());
+        newRuleName.setSqlPart(ruleName.getSqlPart());
+        ruleNameService.save(newRuleName);
+        return "redirect:/ruleName/list";
     }
 
     @GetMapping("/ruleName/delete/{id}")
