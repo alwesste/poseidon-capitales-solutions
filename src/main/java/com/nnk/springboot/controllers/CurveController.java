@@ -3,6 +3,8 @@ package com.nnk.springboot.controllers;
 import com.nnk.springboot.domain.CurvePoint;
 import com.nnk.springboot.services.CurvePointService;
 import jakarta.validation.Valid;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
@@ -16,6 +18,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
 public class CurveController {
+
+    private static final Logger logger = LogManager.getLogger(CurveController.class);
+
     @Autowired
     private CurvePointService curvePointService;
 
@@ -36,11 +41,13 @@ public class CurveController {
     @PostMapping("/curvePoint/validate")
     public String validate(@Valid CurvePoint curvePoint, BindingResult result, Model model) {
 
-        if (!result.hasErrors()) {
-            curvePointService.save(curvePoint);
-            return "redirect:/curvePoint/list";
+        if (result.hasErrors()) {
+            logger.warn("Erreur lors de la validation de Curpoint id -> {} : {}",
+                    curvePoint.getId(), result.getAllErrors());
+            return "curvePoint/add";
         }
-        return "curvePoint/add";
+        curvePointService.save(curvePoint);
+        return "redirect:/curvePoint/list";
     }
 
     @GetMapping("/curvePoint/update/{id}")
@@ -53,15 +60,19 @@ public class CurveController {
     @PostMapping("/curvePoint/update/{id}")
     public String updateBid(@PathVariable("id") Integer id, @Valid CurvePoint curvePoint,
                             BindingResult result, Model model) {
-        if (!result.hasErrors()) {
-            CurvePoint newCurvePoint = curvePointService.findById(id);
-            newCurvePoint.setTerm(curvePoint.getTerm());
-            newCurvePoint.setValue(curvePoint.getValue());
-            curvePointService.save(newCurvePoint);
-            model.addAttribute("curvePoints", curvePointService.findAll());
-            return "redirect:/curvePoint/list";
+        if (result.hasErrors()) {
+            logger.warn("Erreur lors de la mise a jour de curvePoint id -> {} : {}",
+                    curvePoint.getCurveId(), result.getAllErrors());
+            return "curvePoint/update";
         }
-        return "curvePoint/update";
+
+        CurvePoint newCurvePoint = curvePointService.findById(id);
+        newCurvePoint.setCurveId(curvePoint.getCurveId());
+        newCurvePoint.setTerm(curvePoint.getTerm());
+        newCurvePoint.setValue(curvePoint.getValue());
+        curvePointService.save(newCurvePoint);
+        model.addAttribute("curvePoints", curvePointService.findAll());
+        return "redirect:/curvePoint/list";
     }
 
     @GetMapping("/curvePoint/delete/{id}")

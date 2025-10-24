@@ -3,6 +3,8 @@ package com.nnk.springboot.controllers;
 import com.nnk.springboot.domain.Rating;
 import com.nnk.springboot.services.RatingService;
 import jakarta.validation.Valid;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
@@ -16,6 +18,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
 public class RatingController {
+
+    private static final Logger logger = LogManager.getLogger(RatingController.class);
+
     @Autowired
     private RatingService ratingService;
 
@@ -36,12 +41,14 @@ public class RatingController {
     @PostMapping("/rating/validate")
     public String validate(@Valid Rating rating, BindingResult result, Model model) {
 
-        if (!result.hasErrors()) {
-            ratingService.save(rating);
-            return "redirect:/rating/list";
+        if (result.hasErrors()) {
+            logger.warn("Erreurs lors de la validation du rating {}, {}",
+                    rating.getId(), result.getAllErrors());
+            model.addAttribute("rating", ratingService.findAll());
+            return "rating/add";
         }
-        model.addAttribute("rating", ratingService.findAll());
-        return "rating/add";
+        ratingService.save(rating);
+        return "redirect:/rating/list";
     }
 
     @GetMapping("/rating/update/{id}")
@@ -57,16 +64,19 @@ public class RatingController {
     public String updateRating(@PathVariable("id") Integer id, @Valid Rating rating,
                                BindingResult result, Model model) {
 
-        if (!result.hasErrors()) {
-            Rating newRating = ratingService.findById(id);
-            newRating.setMoodysRating(rating.getMoodysRating());
-            newRating.setSandPRating(rating.getSandPRating());
-            newRating.setFitchRating(rating.getFitchRating());
-            newRating.setOrderNumber(rating.getOrderNumber());
-            ratingService.save(newRating);
-            return "redirect:/rating/list";
+        if (result.hasErrors()) {
+            logger.warn("Erreurs lors de la mise a jour du rating {} : {}",
+                    rating.getId(), result.getAllErrors());
+            return "rating/update";
         }
-        return "rating/update";
+
+        Rating newRating = ratingService.findById(id);
+        newRating.setMoodysRating(rating.getMoodysRating());
+        newRating.setSandPRating(rating.getSandPRating());
+        newRating.setFitchRating(rating.getFitchRating());
+        newRating.setOrderNumber(rating.getOrderNumber());
+        ratingService.save(newRating);
+        return "redirect:/rating/list";
     }
 
     @GetMapping("/rating/delete/{id}")
