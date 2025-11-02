@@ -7,7 +7,8 @@ TRUNCATE TABLE trade;
 
 insert into users(fullname, username, password, role) VALUES
 ('Administrator', 'admin', '$2a$10$pBV8ILO/s/nao4wVnGLrh.sa/rnr5pDpbeC4E.KNzQWoy8obFZdaa', 'ADMIN'),
-('User', 'user', '$2a$10$pBV8ILO/s/nao4wVnGLrh.sa/rnr5pDpbeC4E.KNzQWoy8obFZdaa', 'USER');
+('User', 'user', '$2a$10$pBV8ILO/s/nao4wVnGLrh.sa/rnr5pDpbeC4E.KNzQWoy8obFZdaa', 'USER'),
+('Leopold', 'leo', '$2y$10$J1vq8h4cB3nyEGNBqRc6mOXtZxYbjU2InENFya1vZhqwdryWus3Ke', 'USER');
 
 INSERT INTO curvepoint(term, value) VALUES
 (1.0, 6.0),
