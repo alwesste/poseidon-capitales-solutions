@@ -1,7 +1,7 @@
 package com.nnk.springboot.controllers;
 
 import com.nnk.springboot.domain.User;
-import com.nnk.springboot.services.UserService;
+import com.nnk.springboot.services.impl.UserService;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import org.apache.logging.log4j.LogManager;
@@ -58,7 +58,6 @@ public class UserController {
     @GetMapping("/user/update/{id}")
     public String showUpdateForm(@PathVariable("id") Integer id, Model model) {
         User user = userService.findById(id);
-        user.setPassword("");
         model.addAttribute("user", user);
         return "user/update";
     }
@@ -71,9 +70,10 @@ public class UserController {
         }
         user.setId(id);
         userService.save(user);
-        model.addAttribute("users", userService.findAll());
         return "redirect:/user/list";
     }
+
+
 
     @GetMapping("/user/delete/{id}")
     public String deleteUser(@PathVariable("id") Integer id, Model model) {

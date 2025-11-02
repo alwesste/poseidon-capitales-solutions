@@ -2,6 +2,7 @@ package com.nnk.springboot.domain;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
 
 
 @Entity
@@ -13,11 +14,24 @@ public class User {
     @NotBlank(message = "Username is mandatory")
     private String username;
     @NotBlank(message = "Password is mandatory")
+    @Pattern(
+            regexp = "^(?=.*[A-Z])(?=.*\\d)(?=.*[!@#$%^&*(),.?\":{}|<>_\\-+=/\\\\]).{8,}$",
+            message = "Le mot de passe doit contenir au moin 8 caracteres, un chiffre, une majuscule et un symbole special")
     private String password;
     @NotBlank(message = "FullName is mandatory")
     private String fullname;
     @NotBlank(message = "Role is mandatory")
     private String role;
+
+    public User(String username, String password, String fullname, String role) {
+        this.username = username;
+        this.password = password;
+        this.fullname = fullname;
+        this.role = role;
+    }
+
+    public User() {
+    }
 
     public Integer getId() {
         return id;
