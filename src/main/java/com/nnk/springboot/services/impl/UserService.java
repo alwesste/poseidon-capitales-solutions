@@ -1,4 +1,4 @@
-package com.nnk.springboot.services;
+package com.nnk.springboot.services.impl;
 
 import com.nnk.springboot.domain.User;
 import com.nnk.springboot.repositories.UserRepository;
@@ -28,12 +28,6 @@ public class UserService {
     }
 
     public User save(User user) {
-        if (userRepository.findByUsername(user.getUsername()).isPresent()) {
-            throw new ResponseStatusException(
-                    HttpStatus.CONFLICT,
-                    "Le nom d'utilisateur existe déjà: " + user.getUsername()
-            );
-        }
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         return userRepository.save(user);
     }
