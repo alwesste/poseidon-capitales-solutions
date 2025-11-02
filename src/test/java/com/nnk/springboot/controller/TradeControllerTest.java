@@ -1,31 +1,32 @@
-package com.nnk.springboot.integration;
+package com.nnk.springboot.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nnk.springboot.domain.Trade;
 import com.nnk.springboot.repositories.TradeRepository;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import jakarta.transaction.Transactional;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.hamcrest.Matchers.hasProperty;
 import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@RunWith(SpringRunner.class)
 @SpringBootTest
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
-public class TradeControllerTest {
+@Transactional
+class TradeControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
@@ -36,9 +37,17 @@ public class TradeControllerTest {
     @Autowired
     private TradeRepository tradeRepository;
 
+    @Value("${spring.datasource.url}")
+    private String datasourceUrl;
+
+    @Test
+    void checkDatabaseUrl() {
+        System.out.println(">>> Using database: " + datasourceUrl);
+    }
+
     @Test
     @WithMockUser(username = "admin", roles = "ADMIN")
-    public void shouldReturnCreated() throws Exception {
+    void shouldReturnCreated() throws Exception {
 
         mockMvc.perform(post("/trade/validate")
                         .with(csrf())
@@ -51,7 +60,7 @@ public class TradeControllerTest {
 
     @Test
     @WithMockUser(username = "admin", roles = {"ADMIN"})
-    public void shouldReturnTheTradeById() throws Exception {
+    void shouldReturnTheTradeById() throws Exception {
 
         mockMvc.perform(get("/trade/update/{id}", 3))
                 .andExpect(status().isOk())
@@ -63,7 +72,7 @@ public class TradeControllerTest {
 
     @Test
     @WithMockUser(username = "admin", roles = {"ADMIN"})
-    public void shouldReturnRedirectionForUpdating() throws Exception {
+    void shouldReturnRedirectionForUpdating() throws Exception {
 
         mockMvc.perform(post("/trade/update/{id}", 2)
                         .with(csrf())
@@ -81,24 +90,34 @@ public class TradeControllerTest {
 
     @Test
     @WithMockUser(username = "admin", roles = {"ADMIN"})
-    public void shouldDeleteTheTradeSelected() throws Exception {
+    void shouldDeleteTheTradeSelected() throws Exception {
 
         mockMvc.perform(get("/trade/delete/{id}", 3))
                 .andExpect(status().is3xxRedirection());
 
         boolean deleteTrade = tradeRepository.existsById(3);
-        assertEquals(false, deleteTrade);
+        assertFalse(deleteTrade);
     }
 
     @Test
     @WithMockUser(username = "user", roles = "User")
-    public void shouldReturnUpdateAfterFailedUpdateTrade() throws Exception {
+    void shouldReturnUpdateAfterFailedUpdateTrade() throws Exception {
         mockMvc.perform(post("/trade/update/{id}", 1)
                         .with(csrf())
                         .param("account", "")
                         .param("type", ""))
                 .andExpect(view().name("trade/list"))
                 .andExpect(model().attributeHasFieldErrors("trade", "account", "type"));
+    }
+
+    @Test
+    @WithMockUser(username = "user", roles = "User")
+    void shouldReturnTheTradePage() throws Exception {
+        mockMvc.perform(get("/trade/list"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("trade/list"))
+                .andExpect(model().attributeExists("trades"))
+                .andExpect(model().attributeExists("username"));
     }
 
 }

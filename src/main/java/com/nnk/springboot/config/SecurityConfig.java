@@ -1,6 +1,6 @@
 package com.nnk.springboot.config;
 
-import com.nnk.springboot.services.CustomUserDetailsService;
+import com.nnk.springboot.services.impl.CustomUserDetailsService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;

@@ -1,16 +1,16 @@
-package com.nnk.springboot.integration;
+package com.nnk.springboot.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nnk.springboot.domain.RuleName;
 import com.nnk.springboot.repositories.RuleNameRepository;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+
+import jakarta.transaction.Transactional;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.hamcrest.Matchers.hasProperty;
@@ -22,11 +22,11 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@RunWith(SpringRunner.class)
 @SpringBootTest
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
-public class RuleNameControllerTest {
+@Transactional
+class RuleNameControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
@@ -39,7 +39,7 @@ public class RuleNameControllerTest {
 
     @Test
     @WithMockUser(username = "admin", roles = {"ADMIN"})
-    public void shouldReturnRuleNameView() throws Exception {
+    void shouldReturnRuleNameView() throws Exception {
         mockMvc.perform(get("/ruleName/list"))
                 .andExpect(view().name("ruleName/list"))
                 .andExpect(model().attributeExists("ruleNames"));
@@ -47,7 +47,7 @@ public class RuleNameControllerTest {
 
     @Test
     @WithMockUser(username = "admin", roles = {"ADMIN"})
-    public void shouldReturnCreated() throws Exception {
+    void shouldReturnCreated() throws Exception {
 
         mockMvc.perform(post("/ruleName/validate")
                         .with(csrf())
@@ -63,7 +63,7 @@ public class RuleNameControllerTest {
 
     @Test
     @WithMockUser(username = "admin", roles = {"ADMIN"})
-    public void shouldReturnTheRuleNameById() throws Exception {
+    void shouldReturnTheRuleNameById() throws Exception {
 
         mockMvc.perform(get("/ruleName/update/{id}", 2))
                 .andExpect(status().isOk())
@@ -78,7 +78,7 @@ public class RuleNameControllerTest {
 
     @Test
     @WithMockUser(username = "admin", roles = {"ADMIN"})
-    public void shouldReturnRedirectionForUpdating() throws Exception {
+    void shouldReturnRedirectionForUpdating() throws Exception {
 
         mockMvc.perform(post("/ruleName/update/{id}", 2)
                         .with(csrf())
@@ -102,19 +102,19 @@ public class RuleNameControllerTest {
 
     @Test
     @WithMockUser(username = "admin", roles = {"ADMIN"})
-    public void shouldDeleteTheRuleNameSelected() throws Exception {
+    void shouldDeleteTheRuleNameSelected() throws Exception {
 
         mockMvc.perform(get("/ruleName/delete/{id}", 3))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/ruleName/list"));
 
         boolean deletedRating = ruleNameRepository.existsById(3);
-        assertEquals(false, deletedRating);
+        assertFalse(deletedRating);
     }
 
     @Test
     @WithMockUser(username = "admin", roles = {"ADMIN"})
-    public void shouldSendErrorIdIsNotFound() throws Exception {
+    void shouldSendErrorIdIsNotFound() throws Exception {
 
         mockMvc.perform(get("/ruleName/delete/{id}", 100))
                 .andExpect(status().isNotFound());
@@ -125,7 +125,7 @@ public class RuleNameControllerTest {
 
     @Test
     @WithMockUser(username = "user", roles = "User")
-    public void shouldReturnUpdateAfterFailedRuleName() throws Exception {
+    void shouldReturnUpdateAfterFailedRuleName() throws Exception {
         mockMvc.perform(post("/ruleName/update/{id}", 1)
                         .with(csrf())
                         .param("name", "")
@@ -138,4 +138,13 @@ public class RuleNameControllerTest {
                 .andExpect(model().attributeHasFieldErrors("ruleName", "name", "description", "json", "template", "sqlStr", "sqlPart"));
     }
 
+    @Test
+    @WithMockUser(username = "user", roles = "User")
+    void shouldReturnTheRuleNamePage() throws Exception {
+        mockMvc.perform(get("/ruleName/list"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("ruleName/list"))
+                .andExpect(model().attributeExists("ruleNames"))
+                .andExpect(model().attributeExists("username"));
+    }
 }

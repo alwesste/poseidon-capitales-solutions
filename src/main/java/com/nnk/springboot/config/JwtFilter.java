@@ -1,7 +1,7 @@
 package com.nnk.springboot.config;
 
-import com.nnk.springboot.services.CustomUserDetailsService;
-import com.nnk.springboot.services.JWTService;
+import com.nnk.springboot.services.impl.CustomUserDetailsService;
+import com.nnk.springboot.services.impl.JWTService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;
@@ -64,7 +64,7 @@ public class JwtFilter extends OncePerRequestFilter {
                     }
                 }
             } catch (Exception e) {
-                System.err.println("JWT validation failed: " + e.getMessage());
+                System.err.println("La validation du JWT a echoue: " + e.getMessage());
             }
         }
 

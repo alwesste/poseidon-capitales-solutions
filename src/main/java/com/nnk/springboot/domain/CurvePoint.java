@@ -15,13 +15,13 @@ public class CurvePoint {
     private Integer id;
 
     @Column(name = "curveId")
+    @NotNull(message = "Veuillez ecrire un nombre")
     private Integer curveId;
 
     @Column(name = "asOfDate")
     private Timestamp asOfDate;
 
-    @NotNull(message = "Term is mandatory")
-    @Positive(message = "Value must be greater than 0")
+    @NotNull(message = "Veuillez ecrire un nombre")
     private Double term;
 
     @NotNull(message = "Value is mandatory")

@@ -1,7 +1,7 @@
 package com.nnk.springboot.controllers;
 
 import com.nnk.springboot.repositories.UserRepository;
-import com.nnk.springboot.services.JWTService;
+import com.nnk.springboot.services.impl.JWTService;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,7 +33,6 @@ public class LoginController {
     public ModelAndView login() {
         ModelAndView mav = new ModelAndView();
         mav.setViewName("login");
-        System.out.println("login !!!");
         return mav;
     }
 
@@ -53,7 +52,6 @@ public class LoginController {
         tokenCookie.setPath("/");
         tokenCookie.setMaxAge(24 * 60 * 60);
         httpServletResponse.addCookie(tokenCookie);
-        System.out.println("signin done !");
         return "redirect:/";
     }
 
@@ -69,7 +67,6 @@ public class LoginController {
     @GetMapping("error")
     public ModelAndView error(Model model, Authentication authentication) {
         ModelAndView mav = new ModelAndView();
-
         model.addAttribute("username", authentication.getName());
         String errorMessage = "You are not authorized for the requested data.";
         mav.addObject("errorMsg", errorMessage);

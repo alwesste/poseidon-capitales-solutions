@@ -1,16 +1,15 @@
-package com.nnk.springboot.integration;
+package com.nnk.springboot.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nnk.springboot.domain.Rating;
 import com.nnk.springboot.repositories.RatingRepository;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import jakarta.transaction.Transactional;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.hamcrest.Matchers.hasProperty;
@@ -22,11 +21,11 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@RunWith(SpringRunner.class)
 @SpringBootTest
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
-public class RatingControllerTest {
+@Transactional
+class RatingControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
@@ -39,7 +38,7 @@ public class RatingControllerTest {
 
     @Test
     @WithMockUser(username = "admin", roles = {"ADMIN"})
-    public void shouldReturnRatingView() throws Exception {
+    void shouldReturnRatingView() throws Exception {
         mockMvc.perform(get("/rating/list"))
                 .andExpect(view().name("rating/list"))
                 .andExpect(model().attributeExists("ratings"));
@@ -48,7 +47,7 @@ public class RatingControllerTest {
 
     @Test
     @WithMockUser(username = "admin", roles = {"ADMIN"})
-    public void shouldReturnCreated() throws Exception {
+    void shouldReturnCreated() throws Exception {
 
         mockMvc.perform(post("/rating/validate")
                         .with(csrf())
@@ -62,7 +61,7 @@ public class RatingControllerTest {
 
     @Test
     @WithMockUser(username = "admin", roles = {"ADMIN"})
-    public void shouldReturnTheRatingById() throws Exception {
+    void shouldReturnTheRatingById() throws Exception {
 
         mockMvc.perform(get("/rating/update/{id}", 1))
                 .andExpect(status().isOk())
@@ -75,7 +74,7 @@ public class RatingControllerTest {
 
     @Test
     @WithMockUser(username = "admin", roles = {"ADMIN"})
-    public void shouldReturnRedirectionForUpdating() throws Exception {
+    void shouldReturnRedirectionForUpdating() throws Exception {
 
         mockMvc.perform(post("/rating/update/{id}", 2)
                         .with(csrf())
@@ -95,19 +94,19 @@ public class RatingControllerTest {
 
     @Test
     @WithMockUser(username = "admin", roles = {"ADMIN"})
-    public void shouldDeleteTheCurvePointSelected() throws Exception {
+    void shouldDeleteTheCurvePointSelected() throws Exception {
 
         mockMvc.perform(get("/rating/delete/{id}", 3))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/rating/list"));
 
         boolean deletedRating = ratingRepository.existsById(3);
-        assertEquals(false, deletedRating);
+        assertFalse(deletedRating);
     }
 
     @Test
     @WithMockUser(username = "admin", roles = {"ADMIN"})
-    public void shouldSendErrorIdIsNotFound() throws Exception {
+    void shouldSendErrorIdIsNotFound() throws Exception {
 
         mockMvc.perform(get("/rating/delete/{id}", 100))
                 .andExpect(status().isNotFound());
@@ -118,7 +117,7 @@ public class RatingControllerTest {
 
     @Test
     @WithMockUser(username = "user", roles = "User")
-    public void shouldReturnUpdateAfterFailedUpdateRating() throws Exception {
+    void shouldReturnUpdateAfterFailedUpdateRating() throws Exception {
         mockMvc.perform(post("/rating/update/{id}", 1)
                         .with(csrf())
                         .param("moodysRating", "")
@@ -128,6 +127,16 @@ public class RatingControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(view().name("rating/update"))
                 .andExpect(model().attributeHasFieldErrors("rating", "moodysRating", "sandPRating", "fitchRating", "orderNumber"));
+    }
+
+    @Test
+    @WithMockUser(username = "user", roles = "User")
+    void shouldReturnTheRatingPage() throws Exception {
+        mockMvc.perform(get("/rating/list"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("rating/list"))
+                .andExpect(model().attributeExists("ratings"))
+                .andExpect(model().attributeExists("username"));
     }
 }
 

@@ -1,44 +1,62 @@
-package com.nnk.springboot.integration;
+package com.nnk.springboot.controller;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nnk.springboot.domain.BidList;
 import com.nnk.springboot.repositories.BidListRepository;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import jakarta.transaction.Transactional;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.ApplicationContext;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
+
+import javax.sql.DataSource;
+
+import java.sql.Connection;
+import java.util.Arrays;
 
 import static org.hamcrest.Matchers.hasProperty;
 import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@RunWith(SpringRunner.class)
 @SpringBootTest
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
-public class BidListControllerTest {
+@Transactional
+class BidListControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
 
     @Autowired
-    private ObjectMapper objectMapper;
+    private BidListRepository bidListRepository;
 
     @Autowired
-    private BidListRepository bidListRepository;
+    private ApplicationContext applicationContext;
 
     @Test
     @WithMockUser(username = "admin", roles = "ADMIN")
-    public void shouldReturnCreated() throws Exception {
+    void verifyDatabase() throws Exception {
+        System.out.println("Active profile: " + Arrays.toString(
+                applicationContext.getEnvironment().getActiveProfiles()));
+
+        // Vérifier la source de données
+        DataSource dataSource = applicationContext.getBean(DataSource.class);
+        try (Connection conn = dataSource.getConnection()) {
+            System.out.println("Database URL: " + conn.getMetaData().getURL());
+        }
+    }
+
+    @Test
+    @WithMockUser(username = "admin", roles = "ADMIN")
+    void shouldReturnCreated() throws Exception {
 
         mockMvc.perform(post("/bidList/validate")
                         .with(csrf())
@@ -51,7 +69,7 @@ public class BidListControllerTest {
 
     @Test
     @WithMockUser(username = "admin", roles = {"ADMIN"})
-    public void shouldReturnTheBidListById() throws Exception {
+    void shouldReturnTheBidListById() throws Exception {
 
         mockMvc.perform(get("/bidList/update/{id}", 3))
                 .andExpect(status().isOk())
@@ -63,7 +81,7 @@ public class BidListControllerTest {
 
     @Test
     @WithMockUser(username = "admin", roles = {"ADMIN"})
-    public void shouldReturnRedirectionForUpdating() throws Exception {
+    void shouldReturnRedirectionForUpdating() throws Exception {
 
         mockMvc.perform(post("/bidList/update/{id}", 2)
                         .with(csrf())
@@ -81,18 +99,18 @@ public class BidListControllerTest {
 
     @Test
     @WithMockUser(username = "admin", roles = {"ADMIN"})
-    public void shouldDeleteTheBidListSelected() throws Exception {
+    void shouldDeleteTheBidListSelected() throws Exception {
 
         mockMvc.perform(get("/bidList/delete/{id}", 3))
                 .andExpect(status().is3xxRedirection());
 
         boolean deletedBidList = bidListRepository.existsById(3);
-        assertEquals(false, deletedBidList);
+        assertFalse(deletedBidList);
     }
 
     @Test
     @WithMockUser(username = "user", roles = "User")
-    public void shouldReturnUpdateAfterFailedUpdateBidTest() throws Exception {
+    void shouldReturnUpdateAfterFailedUpdateBidTest() throws Exception {
         mockMvc.perform(post("/bidList/update/{id}", 1)
                         .with(csrf())
                         .param("account", "")
@@ -100,6 +118,16 @@ public class BidListControllerTest {
                         .param("bidQuantity", ""))
                 .andExpect(view().name("bidList/list"))
                 .andExpect(model().attributeHasFieldErrors("bidList", "account", "type", "bidQuantity"));
+    }
+
+    @Test
+    @WithMockUser(username = "user", roles = "User")
+    void shouldReturnTheBidListPage() throws Exception {
+        mockMvc.perform(get("/bidList/list"))
+                .andExpect(status().isOk())  // HTTP 200
+                .andExpect(view().name("bidList/list"))
+                .andExpect(model().attributeExists("bidLists"))
+                .andExpect(model().attributeExists("username"));
     }
 }
 
