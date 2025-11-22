@@ -52,7 +52,7 @@ public class LoginController {
         tokenCookie.setPath("/");
         tokenCookie.setMaxAge(24 * 60 * 60);
         httpServletResponse.addCookie(tokenCookie);
-        return "redirect:/";
+        return "redirect:/home";
     }
 
 

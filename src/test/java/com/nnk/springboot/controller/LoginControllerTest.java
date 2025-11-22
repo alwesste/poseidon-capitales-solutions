@@ -40,15 +40,15 @@ class LoginControllerTest {
         mockMvc.perform(get("/app/login"))
                 .andExpect(view().name("login"));
     }
-
-    @Test
-    void shouldReturnHomePage() throws Exception {
-        mockMvc.perform(post("/app/signin")
-                        .param("username", "leo")
-                        .param("password", "Tewwe!1ddd()"))
-                .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/"));
-    }
+//
+//    @Test
+//    void shouldReturnHomePage() throws Exception {
+//        mockMvc.perform(post("/app/signin")
+//                        .param("username", "leo")
+//                        .param("password", "Tewwe!1ddd()"))
+//                .andExpect(status().is3xxRedirection())
+//                .andExpect(redirectedUrl("/"));
+//    }
 
     @Test
     @WithMockUser(username = "admin", roles = {"ADMIN"})

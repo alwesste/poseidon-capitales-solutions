@@ -6,24 +6,21 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
-import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
 public class SecurityConfig {
 
     private final CustomUserDetailsService customUserDetailsService;
-    private final JwtFilter jwtFilter;
 
-    public SecurityConfig(CustomUserDetailsService customUserDetailsService, JwtFilter jwtFilter) {
+    public SecurityConfig(CustomUserDetailsService customUserDetailsService) {
         this.customUserDetailsService = customUserDetailsService;
-        this.jwtFilter = jwtFilter;
     }
 
     @Bean
@@ -47,33 +44,31 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        return http
-                .csrf(AbstractHttpConfigurer::disable)
+         http
+                .csrf(Customizer.withDefaults())
 
-                .authorizeHttpRequests(request -> request
-                        .requestMatchers("/app/login", "/app/signin", "/css/**").permitAll()
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/app/login", "/app/signin", "/css/**", "/").permitAll()
                         .requestMatchers("/user/list").hasRole("ADMIN")
-                        .anyRequest().authenticated())
+                        .anyRequest().authenticated()
+                )
 
-                .httpBasic(AbstractHttpConfigurer::disable)
+                 .formLogin(form -> form
+                         .loginPage("/app/login")
+                         .defaultSuccessUrl("/user/list", true)
+                 )
+                 .oauth2Login(oauth -> oauth.loginPage("/app/login").defaultSuccessUrl("/", true))
+
 
                 .logout(logout -> logout
                         .logoutUrl("/logout")
                         .logoutSuccessUrl("/app/login")
-                        .deleteCookies("jwt")
+                        .deleteCookies("JSESSIONID")
                         .permitAll()
                 )
 
-                .exceptionHandling(exception -> exception
-                        .accessDeniedPage("/app/error")
-                )
-                .sessionManagement(session ->
-                        session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .authenticationProvider(authenticationProvider());
 
-                .authenticationProvider(authenticationProvider())
-
-                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
-
-                .build();
+        return http.build();
     }
 }
