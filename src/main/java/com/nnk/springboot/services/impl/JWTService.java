@@ -1,5 +1,6 @@
 package com.nnk.springboot.services.impl;
 
+import com.nnk.springboot.services.IJwtService;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
@@ -17,7 +18,7 @@ import java.util.function.Function;
 
 
 @Service
-public class JWTService {
+public class JWTService implements IJwtService {
 
     private String secretkey = "";
 
@@ -32,6 +33,7 @@ public class JWTService {
         }
     }
 
+    @Override
     public String generateToken(Authentication authentication) {
         return Jwts.builder()
                 .subject(authentication.getName())
@@ -46,6 +48,7 @@ public class JWTService {
         return Keys.hmacShaKeyFor(keyBytes);
     }
 
+    @Override
     public String extractUserName(String token) {
         return extractClaim(token, Claims::getSubject);
     }
@@ -63,6 +66,7 @@ public class JWTService {
                 .getPayload();
     }
 
+    @Override
     public boolean validateToken(String token, UserDetails userDetails) {
         final String userName = extractUserName(token);
         return (userName.equals(userDetails.getUsername()) && !isTokenExpired(token));

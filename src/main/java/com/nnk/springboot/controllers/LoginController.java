@@ -29,6 +29,10 @@ public class LoginController {
     @Autowired
     private AuthenticationManager authenticationManager;
 
+    /**
+     *
+     * @return la page de login
+     */
     @GetMapping("login")
     public ModelAndView login() {
         ModelAndView mav = new ModelAndView();
@@ -36,6 +40,13 @@ public class LoginController {
         return mav;
     }
 
+    /**
+     *
+     * @param username
+     * @param password
+     * @param httpServletResponse
+     * @return la vue "home" apres generation d'un token jwt et en le placant dans un cookie
+     */
     @PostMapping("signin")
     public String signIn(
             @RequestParam String username,
@@ -56,6 +67,11 @@ public class LoginController {
     }
 
 
+    /**
+     *
+     * @return la vue user/list apres avoir ajoute les utilisateurs sous le nom
+     * "users" dans le model
+     */
     @GetMapping("secure/article-details")
     public ModelAndView getAllUserArticles() {
         ModelAndView mav = new ModelAndView();
@@ -64,6 +80,12 @@ public class LoginController {
         return mav;
     }
 
+    /**
+     *
+     * @param model
+     * @param authentication
+     * @return une page d'erreur si une erreur est apparue
+     */
     @GetMapping("error")
     public ModelAndView error(Model model, Authentication authentication) {
         ModelAndView mav = new ModelAndView();

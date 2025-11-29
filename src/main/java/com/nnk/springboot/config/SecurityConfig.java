@@ -26,11 +26,20 @@ public class SecurityConfig {
         this.jwtFilter = jwtFilter;
     }
 
+    /**
+     *
+     * @return un PasswordEncoder pour le hashage de mot de passe
+     */
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
+    /**
+     *
+     * @return un AuthenticationProvider base sur DaoAuthenticationProvider
+     * pour verifie un utilisateur avec customUserDetailsService et Bcrypt
+     */
     @Bean
     public AuthenticationProvider authenticationProvider() {
         DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
@@ -39,12 +48,24 @@ public class SecurityConfig {
         return authProvider;
     }
 
+    /**
+     *
+     * @param authConfig configuration automatique de spring secutity
+     * @return l'authenticationManager utilise pour traiter les tentatives de connexion
+     * @throws Exception
+     */
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration authConfig) throws Exception {
         return authConfig.getAuthenticationManager();
     }
 
 
+    /**
+     *
+     * Configure les routes autorisees, les sessions, logout et filtres personalise
+     * @return  la SecurityFilterChain
+     * @throws Exception
+     */
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http

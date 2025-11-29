@@ -25,6 +25,11 @@ public class UserController {
     @Autowired
     private UserService userService;
 
+    /**
+     *
+     * @param model
+     * @return la vue user/list
+     */
     @RequestMapping("/user/list")
     public String home(Model model)
     {
@@ -32,11 +37,23 @@ public class UserController {
         return "user/list";
     }
 
+    /**
+     *
+     * @param bid
+     * @return la vue user/add
+     */
     @GetMapping("/user/add")
     public String addUser(User bid) {
         return "user/add";
     }
 
+    /**
+     *
+     * @param user
+     * @param result
+     * @param model
+     * @return la vue user/list apres la verification de l objet User
+     */
     @PostMapping("/user/validate")
     public String validate(@Valid User user, BindingResult result, Model model) {
         if (result.hasErrors()) {
@@ -55,6 +72,12 @@ public class UserController {
         }
     }
 
+    /**
+     *
+     * @param id
+     * @param model
+     * @return la vue user/update via l id de user
+     */
     @GetMapping("/user/update/{id}")
     public String showUpdateForm(@PathVariable("id") Integer id, Model model) {
         User user = userService.findById(id);
@@ -62,6 +85,14 @@ public class UserController {
         return "user/update";
     }
 
+    /**
+     *
+     * @param id
+     * @param user
+     * @param result
+     * @param model
+     * @return la vue user/list apres mise a jour de user
+     */
     @PostMapping("/user/update/{id}")
     public String updateUser(@PathVariable("id") Integer id, @Valid User user,
                              BindingResult result, Model model) {
@@ -73,8 +104,12 @@ public class UserController {
         return "redirect:/user/list";
     }
 
-
-
+    /**
+     *
+     * @param id
+     * @param model
+     * @return la vue user/list apres suppression de l'objet user via son Id
+     */
     @GetMapping("/user/delete/{id}")
     public String deleteUser(@PathVariable("id") Integer id, Model model) {
         userService.delete(id);

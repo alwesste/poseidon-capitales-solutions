@@ -24,6 +24,12 @@ public class RuleNameController {
     @Autowired
     private RuleNameService ruleNameService;
 
+    /**
+     *
+     * @param model
+     * @param authentication
+     * @return la vue ruleName/list
+     */
     @RequestMapping("/ruleName/list")
     public String home(Model model, Authentication authentication) {
         model.addAttribute("username", authentication.getName());
@@ -31,11 +37,23 @@ public class RuleNameController {
         return "ruleName/list";
     }
 
+    /**
+     *
+     * @param bid
+     * @return la vue ruleName/add
+     */
     @GetMapping("/ruleName/add")
     public String addRuleForm(RuleName bid) {
         return "ruleName/add";
     }
 
+    /**
+     *
+     * @param ruleName
+     * @param result
+     * @param model
+     * @return la vue ruleName/list apres validation du ruleName
+     */
     @PostMapping("/ruleName/validate")
     public String validate(@Valid RuleName ruleName, BindingResult result, Model model) {
         if (result.hasErrors()) {
@@ -47,6 +65,12 @@ public class RuleNameController {
         return "redirect:/ruleName/list";
     }
 
+    /**
+     *
+     * @param id
+     * @param model
+     * @return la vue ruleName/update via l'Id de ruleName
+     */
     @GetMapping("/ruleName/update/{id}")
     public String showUpdateForm(@PathVariable("id") Integer id, Model model) {
         RuleName updateRuleName = ruleNameService.findById(id);
@@ -54,6 +78,14 @@ public class RuleNameController {
         return "ruleName/update";
     }
 
+    /**
+     *
+     * @param id
+     * @param ruleName
+     * @param result
+     * @param model
+     * @return la vue ruleName/list apres mise a jour du rulename
+     */
     @PostMapping("/ruleName/update/{id}")
     public String updateRuleName(@PathVariable("id") Integer id, @Valid RuleName ruleName,
                                  BindingResult result, Model model) {
@@ -75,6 +107,12 @@ public class RuleNameController {
         return "redirect:/ruleName/list";
     }
 
+    /**
+     *
+     * @param id
+     * @param model
+     * @return la vue ruleName/list apres suppression du ruleName via son Id
+     */
     @GetMapping("/ruleName/delete/{id}")
     public String deleteRuleName(@PathVariable("id") Integer id, Model model) {
         ruleNameService.delete(id);

@@ -25,6 +25,12 @@ public class BidListController {
     @Autowired
     private BidListService bidListService;
 
+    /**
+     *
+     * @param model
+     * @param authentication
+     * @return la vue bidList/list
+     */
     @RequestMapping("/bidList/list")
     public String home(Model model, Authentication authentication)
     {
@@ -33,11 +39,23 @@ public class BidListController {
         return "bidList/list";
     }
 
+    /**
+     *
+     * @param bid
+     * @return la vue bidList/add
+     */
     @GetMapping("/bidList/add")
     public String addBidForm(BidList bid) {
         return "bidList/add";
     }
 
+    /**
+     *
+     * @param bid
+     * @param result
+     * @param model
+     * @return la vue bidList/list apres un envoi d'un objet bid
+     */
     @PostMapping("/bidList/validate")
     public String validate(@Valid BidList bid, BindingResult result, Model model) {
         if(result.hasErrors()) {
@@ -50,6 +68,12 @@ public class BidListController {
         return "redirect:/bidList/list";
     }
 
+    /**
+     *
+     * @param id
+     * @param model
+     * @return la vue bidList/update
+     */
     @GetMapping("/bidList/update/{id}")
     public String showUpdateForm(@PathVariable("id") Integer id, Model model) {
         BidList updateBidList = bidListService.findById(id);
@@ -58,6 +82,14 @@ public class BidListController {
         return "bidList/update";
     }
 
+    /**
+     *
+     * @param id
+     * @param bidList
+     * @param result
+     * @param model
+     * @return la vue bidList/list apres mise a jour du bid
+     */
     @PostMapping("/bidList/update/{id}")
     public String updateBid(@PathVariable("id") Integer id, @Valid BidList bidList,
                              BindingResult result, Model model) {
@@ -76,6 +108,12 @@ public class BidListController {
         return "redirect:/bidList/list";
     }
 
+    /**
+     *
+     * @param id
+     * @param model
+     * @return la vue bidList/list apres suppression d'un bid via son Id.
+     */
     @GetMapping("/bidList/delete/{id}")
     public String deleteBid(@PathVariable("id") Integer id, Model model) {
         bidListService.delete(id);
