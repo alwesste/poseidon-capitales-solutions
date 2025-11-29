@@ -24,6 +24,12 @@ public class RatingController {
     @Autowired
     private RatingService ratingService;
 
+    /**
+     *
+     * @param model
+     * @param authentication
+     * @return la vue rating/list
+     */
     @RequestMapping("/rating/list")
     public String home(Model model, Authentication authentication) {
 
@@ -33,11 +39,23 @@ public class RatingController {
         return "rating/list";
     }
 
+    /**
+     *
+     * @param rating
+     * @return la vue rating/add
+     */
     @GetMapping("/rating/add")
     public String addRatingForm(Rating rating) {
         return "rating/add";
     }
 
+    /**
+     *
+     * @param rating
+     * @param result
+     * @param model
+     * @return la vue rating/list apres validation de l'objet rating
+     */
     @PostMapping("/rating/validate")
     public String validate(@Valid Rating rating, BindingResult result, Model model) {
 
@@ -51,6 +69,12 @@ public class RatingController {
         return "redirect:/rating/list";
     }
 
+    /**
+     *
+     * @param id
+     * @param model
+     * @return la vue rating/update apres mise a jour de rating via son Id
+     */
     @GetMapping("/rating/update/{id}")
     public String showUpdateForm(@PathVariable("id") Integer id, Model model) {
 
@@ -60,6 +84,14 @@ public class RatingController {
         return "rating/update";
     }
 
+    /**
+     *
+     * @param id
+     * @param rating
+     * @param result
+     * @param model
+     * @return la vue rating/list apres ajout d'un nouveau rating
+     */
     @PostMapping("/rating/update/{id}")
     public String updateRating(@PathVariable("id") Integer id, @Valid Rating rating,
                                BindingResult result, Model model) {
@@ -79,6 +111,12 @@ public class RatingController {
         return "redirect:/rating/list";
     }
 
+    /**
+     *
+     * @param id
+     * @param model
+     * @return la vue rating/list apres suppression d'un rating via son Id
+     */
     @GetMapping("/rating/delete/{id}")
     public String deleteRating(@PathVariable("id") Integer id, Model model) {
 

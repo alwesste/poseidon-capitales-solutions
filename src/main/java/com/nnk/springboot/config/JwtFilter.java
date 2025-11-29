@@ -27,6 +27,14 @@ public class JwtFilter extends OncePerRequestFilter {
         this.customUserDetailsService = customUserDetailsService;
     }
 
+    /**
+     * Filtre qui permet de valide si JWT est present dans les coolkies
+     * @param request
+     * @param response
+     * @param filterChain
+     * @throws ServletException
+     * @throws IOException
+     */
     @Override
     protected void doFilterInternal(HttpServletRequest request,
                                     HttpServletResponse response,
@@ -35,6 +43,7 @@ public class JwtFilter extends OncePerRequestFilter {
         String token = null;
         String username = null;
 
+        // Recupere le cookie et le place dans token en fonction de son nom "jwt"
         Cookie[] cookies = request.getCookies();
         if (cookies != null) {
             for (Cookie cookie : cookies) {
@@ -47,19 +56,25 @@ public class JwtFilter extends OncePerRequestFilter {
 
         if (token != null) {
             try {
+                //extrait le username du token
                 username = jwtService.extractUserName(token);
 
+                // Verifie si l'utilisateur est deja authentifie
                 if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+                    // on recupere l'utilisateur depuis la BDD
                     UserDetails userDetails = customUserDetailsService.loadUserByUsername(username);
 
+                    // Verifie si kle token est valide (signature jwt, date expiration, nom du user)
                     if (jwtService.validateToken(token, userDetails)) {
                         UsernamePasswordAuthenticationToken authToken =
+                                //Creation du token d'authentification spring security
                                 new UsernamePasswordAuthenticationToken(
                                         userDetails,
                                         null,
                                         userDetails.getAuthorities()
                                 );
                         authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                        //Declare a spring que l'utilisateur est authentifie
                         SecurityContextHolder.getContext().setAuthentication(authToken);
                     }
                 }

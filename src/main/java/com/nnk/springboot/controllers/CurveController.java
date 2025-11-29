@@ -24,6 +24,12 @@ public class CurveController {
     @Autowired
     private CurvePointService curvePointService;
 
+    /**
+     *
+     * @param model
+     * @param authentication
+     * @return la vue curvePoint/list
+     */
     @RequestMapping("/curvePoint/list")
     public String home(Model model, Authentication authentication) {
         model.addAttribute("curvePoints", curvePointService.findAll());
@@ -32,12 +38,25 @@ public class CurveController {
         return "curvePoint/list";
     }
 
+    /**
+     *
+     * @param model
+     * @param curvePoint
+     * @return la vue curvePoint/add
+     */
     @GetMapping("/curvePoint/add")
     public String addBidForm(Model model, CurvePoint curvePoint) {
 
         return "curvePoint/add";
     }
 
+    /**
+     *
+     * @param curvePoint
+     * @param result
+     * @param model
+     * @return la vue curvePoint/list apres validation des attributs de l'objet curvePoint
+     */
     @PostMapping("/curvePoint/validate")
     public String validate(@Valid CurvePoint curvePoint, BindingResult result, Model model) {
 
@@ -50,6 +69,12 @@ public class CurveController {
         return "redirect:/curvePoint/list";
     }
 
+    /**
+     *
+     * @param id
+     * @param model
+     * @return la vue curvePoint/list via l'id de curvePoint
+     */
     @GetMapping("/curvePoint/update/{id}")
     public String showUpdateForm(@PathVariable("id") Integer id, Model model) {
         CurvePoint curvePoint = curvePointService.findById(id);
@@ -57,6 +82,14 @@ public class CurveController {
         return "curvePoint/update";
     }
 
+    /**
+     *
+     * @param id
+     * @param curvePoint
+     * @param result
+     * @param model
+     * @return la vue curvePoint/update apres mise a jour de curvePoint
+     */
     @PostMapping("/curvePoint/update/{id}")
     public String updateBid(@PathVariable("id") Integer id, @Valid CurvePoint curvePoint,
                             BindingResult result, Model model) {
@@ -75,6 +108,12 @@ public class CurveController {
         return "redirect:/curvePoint/list";
     }
 
+    /**
+     *
+     * @param id
+     * @param model
+     * @return la vue curvePoint/list apres suppression d'un curvePoint via son Id
+     */
     @GetMapping("/curvePoint/delete/{id}")
     public String deleteBid(@PathVariable("id") Integer id, Model model) {
         curvePointService.delete(id);

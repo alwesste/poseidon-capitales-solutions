@@ -21,26 +21,41 @@ public class TradeController {
 
     private static final Logger logger = LogManager.getLogger(TradeController.class);
 
-    // TODO: Inject Trade service
     @Autowired
     private TradeService tradeService;
 
+    /**
+     *
+     * @param model
+     * @param authentication
+     * @return la vue trade/list
+     */
     @RequestMapping("/trade/list")
     public String home(Model model, Authentication authentication) {
-        // TODO: find all Trade, add to model
         model.addAttribute("username", authentication.getName());
         model.addAttribute("trades", tradeService.findAll());
         return "trade/list";
     }
 
+    /**
+     *
+     * @param bid
+     * @return la vue trade/add
+     */
     @GetMapping("/trade/add")
     public String addUser(Trade bid) {
         return "trade/add";
     }
 
+    /**
+     *
+     * @param trade
+     * @param result
+     * @param model
+     * @return la vue trade/list apres verification de l'objet trade
+     */
     @PostMapping("/trade/validate")
     public String validate(@Valid Trade trade, BindingResult result, Model model) {
-        // TODO: check data valid and save to db, after saving return Trade list
         if (result.hasErrors()) {
             logger.warn("Erreur de la validation pour le trade {} : {}",
                     trade.getAccount(), result.getAllErrors());
@@ -52,20 +67,30 @@ public class TradeController {
         return "redirect:/trade/list";
     }
 
+    /**
+     *
+     * @param id
+     * @param model
+     * @return la vue trade/update via l'id de trade
+     */
     @GetMapping("/trade/update/{id}")
     public String showUpdateForm(@PathVariable("id") Integer id, Model model) {
-        // TODO: get Trade by Id and to model then show to the form
-
         Trade updateTrade = tradeService.findById(id);
         model.addAttribute("trade", updateTrade);
         return "trade/update";
     }
 
+    /**
+     *
+     * @param id
+     * @param trade
+     * @param result
+     * @param model
+     * @return la vue trade/list apres la mise a jour de trade.
+     */
     @PostMapping("/trade/update/{id}")
     public String updateTrade(@PathVariable("id") Integer id, @Valid Trade trade,
                               BindingResult result, Model model) {
-        // TODO: check required fields, if valid call service to update Trade and return Trade list
-
         if (!result.hasErrors()) {
             Trade newTrade = tradeService.findById(id);
             newTrade.setAccount(trade.getAccount());
@@ -77,10 +102,14 @@ public class TradeController {
         return "trade/list";
     }
 
+    /**
+     *
+     * @param id
+     * @param model
+     * @return la vue trade/list apres suppression du trade via son Id
+     */
     @GetMapping("/trade/delete/{id}")
     public String deleteTrade(@PathVariable("id") Integer id, Model model) {
-        // TODO: Find Trade by Id and delete the Trade, return to Trade list
-
         tradeService.delete(id);
         return "redirect:/trade/list";
     }
