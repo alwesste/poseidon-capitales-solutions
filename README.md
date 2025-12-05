@@ -24,7 +24,6 @@
 2. Create repository class and place in package com.nnk.springboot.repositories
 3. Create controller class and place in package com.nnk.springboot.controllers
 
-## Security
+## Auteur
 
-1. Create user service to load user from database and place in package com.nnk.springboot.services
-2. Add configuration class and place in package com.nnk.springboot.config
+Leopold Dagorn

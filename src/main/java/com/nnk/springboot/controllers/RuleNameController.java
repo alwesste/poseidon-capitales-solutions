@@ -7,6 +7,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -14,6 +15,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+
+import java.util.Collection;
 
 
 @Controller
@@ -34,6 +37,10 @@ public class RuleNameController {
     public String home(Model model, Authentication authentication) {
         model.addAttribute("username", authentication.getName());
         model.addAttribute("ruleNames", ruleNameService.findAll());
+        Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
+
+        boolean isAdmin = authorities.stream().anyMatch(auth -> auth.getAuthority().equals("ROLE_ADMIN"));
+        model.addAttribute("isAdmin", isAdmin);
         return "ruleName/list";
     }
 

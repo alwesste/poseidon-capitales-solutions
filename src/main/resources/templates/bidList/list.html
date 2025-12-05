@@ -15,6 +15,7 @@
 			<a href="/rating/list">Ratings</a>&nbsp;|&nbsp;
 			<a href="/trade/list">Trade</a>&nbsp;|&nbsp;
 			<a href="/ruleName/list">Rule</a>
+			<a href="/user/list" th:if="${isAdmin}">| User management</a>
 		</div>
 		<div class="col-6 text-right">
 			Logged in user: <b th:text="${username}"  class="user"> </b>
