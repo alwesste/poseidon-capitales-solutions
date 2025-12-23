@@ -18,7 +18,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.util.Collection;
 
-
+/**
+ * Controleur gerant les interactions utilisateur avec l'entite BidList.
+ * Ce contrôleur permet d'afficher la liste des offres d'achat (Bids),
+ * d'en ajouter de nouvelles, de les modifier et de les supprimer.
+ * Il intègre également des vérifications de sécurité pour l'affichage conditionnel
+ * dans les vues Thymeleaf (via l'attribut isAdmin). */
 @Controller
 public class BidListController {
 
@@ -28,7 +33,7 @@ public class BidListController {
     private BidListService bidListService;
 
     /**
-     *
+     * Affiche la liste complete des BidList
      * @param model
      * @param authentication
      * @return la vue bidList/list
@@ -48,7 +53,7 @@ public class BidListController {
     }
 
     /**
-     *
+     * Affiche le formulaire d'ajout d'une nouvelle offre.
      * @param bid
      * @return la vue bidList/add
      */
@@ -58,7 +63,7 @@ public class BidListController {
     }
 
     /**
-     *
+     * Valide et enregistre une nouvelle offre dans la base de données.
      * @param bid
      * @param result
      * @param model
@@ -77,7 +82,7 @@ public class BidListController {
     }
 
     /**
-     *
+     * Affiche le formulaire de mise à jour pour une offre spécifique
      * @param id
      * @param model
      * @return la vue bidList/update
@@ -91,7 +96,7 @@ public class BidListController {
     }
 
     /**
-     *
+     * Traite la requête de mise à jour d'une offre existante
      * @param id
      * @param bidList
      * @param result
@@ -117,7 +122,7 @@ public class BidListController {
     }
 
     /**
-     *
+     * Supprime une offre de la base de donnéee
      * @param id
      * @param model
      * @return la vue bidList/list apres suppression d'un bid via son Id.

@@ -18,7 +18,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.util.Collection;
 
-
+/**
+ * Controleur gerant les interactions utilisateur avec l'entite CurvePoint.
+ * Fournit les points d'entrée pour l'affichage, l'ajout, la modification
+ * et la suppression des données des CurvePoints.
+ */
 @Controller
 public class CurveController {
 
@@ -28,7 +32,7 @@ public class CurveController {
     private CurvePointService curvePointService;
 
     /**
-     *
+     * Affiche la liste de tous les CurvePoint
      * @param model
      * @param authentication
      * @return la vue curvePoint/list
@@ -46,7 +50,7 @@ public class CurveController {
     }
 
     /**
-     *
+     * Affiche le formulaire pour l'ajout d'un nouveau point de courbe
      * @param model
      * @param curvePoint
      * @return la vue curvePoint/add
@@ -58,11 +62,11 @@ public class CurveController {
     }
 
     /**
-     *
+     * Valide et enregistre un nouveau CurvePoint
      * @param curvePoint
      * @param result
      * @param model
-     * @return la vue curvePoint/list apres validation des attributs de l'objet curvePoint
+     * @return la vue curvePoint/list apres validation des attributs de l'objet CurvePoint
      */
     @PostMapping("/curvePoint/validate")
     public String validate(@Valid CurvePoint curvePoint, BindingResult result, Model model) {
@@ -77,7 +81,7 @@ public class CurveController {
     }
 
     /**
-     *
+     * Affiche le formulaire de modification pour un CurvePoint
      * @param id
      * @param model
      * @return la vue curvePoint/list via l'id de curvePoint
@@ -90,7 +94,7 @@ public class CurveController {
     }
 
     /**
-     *
+     * Traite la mise à jour d'un CurvePoint existant
      * @param id
      * @param curvePoint
      * @param result
@@ -116,7 +120,7 @@ public class CurveController {
     }
 
     /**
-     *
+     * Supprime un point de courbe de la base de données
      * @param id
      * @param model
      * @return la vue curvePoint/list apres suppression d'un curvePoint via son Id

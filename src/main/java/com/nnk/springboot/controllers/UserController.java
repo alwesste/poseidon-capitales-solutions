@@ -15,7 +15,9 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-
+/**
+ * Contrôleur gérant l'administration des utilisateurs de l'application
+ */
 @Controller
 @Transactional
 public class UserController {
@@ -26,7 +28,7 @@ public class UserController {
     private UserService userService;
 
     /**
-     *
+     * Affiche la liste de tous les utilisateurs enregistrés dans le système.
      * @param model
      * @return la vue user/list
      */
@@ -38,17 +40,17 @@ public class UserController {
     }
 
     /**
-     *
-     * @param bid
+     * Affiche le formulaire de création pour un nouvel utilisateur.
+     * @param user
      * @return la vue user/add
      */
     @GetMapping("/user/add")
-    public String addUser(User bid) {
+    public String addUser(User user) {
         return "user/add";
     }
 
     /**
-     *
+     * Valide et enregistre un nouvel utilisateur.
      * @param user
      * @param result
      * @param model
@@ -73,7 +75,7 @@ public class UserController {
     }
 
     /**
-     *
+     * Affiche le formulaire de mise à jour pour un utilisateur existant.
      * @param id
      * @param model
      * @return la vue user/update via l id de user
@@ -86,7 +88,7 @@ public class UserController {
     }
 
     /**
-     *
+     * Traite la mise à jour d'un utilisateur existant.
      * @param id
      * @param user
      * @param result
@@ -105,7 +107,7 @@ public class UserController {
     }
 
     /**
-     *
+     * Supprime un utilisateur du système.
      * @param id
      * @param model
      * @return la vue user/list apres suppression de l'objet user via son Id

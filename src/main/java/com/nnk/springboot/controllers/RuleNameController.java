@@ -18,7 +18,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.util.Collection;
 
-
+/**
+ * Contrôleur Spring MVC gérant les règles métier
+ */
 @Controller
 public class RuleNameController {
 
@@ -28,7 +30,7 @@ public class RuleNameController {
     private RuleNameService ruleNameService;
 
     /**
-     *
+     * Affiche la liste complète des règles enregistrées
      * @param model
      * @param authentication
      * @return la vue ruleName/list
@@ -45,7 +47,7 @@ public class RuleNameController {
     }
 
     /**
-     *
+     * Affiche le formulaire pour ajouter une nouvelle règle
      * @param bid
      * @return la vue ruleName/add
      */
@@ -55,7 +57,7 @@ public class RuleNameController {
     }
 
     /**
-     *
+     * Valide et persiste une nouvelle règle dans la base de données
      * @param ruleName
      * @param result
      * @param model
@@ -73,7 +75,7 @@ public class RuleNameController {
     }
 
     /**
-     *
+     * Affiche le formulaire de modification pour une règle existante
      * @param id
      * @param model
      * @return la vue ruleName/update via l'Id de ruleName
@@ -86,7 +88,7 @@ public class RuleNameController {
     }
 
     /**
-     *
+     * Traite la mise à jour d'une règle existante
      * @param id
      * @param ruleName
      * @param result
@@ -115,7 +117,7 @@ public class RuleNameController {
     }
 
     /**
-     *
+     * Supprime une règle spécifique
      * @param id
      * @param model
      * @return la vue ruleName/list apres suppression du ruleName via son Id
