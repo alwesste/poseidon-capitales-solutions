@@ -16,6 +16,11 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 
+/**
+ * Filtre la securite intercepte chaque requete HTTP pour verifier la presence et la validite d'un jeton
+ *  JWT valide
+ *  OncePerRequest garantit une execution par requete
+ */
 @Component
 public class JwtFilter extends OncePerRequestFilter {
 

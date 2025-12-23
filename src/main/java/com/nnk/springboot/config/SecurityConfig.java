@@ -15,6 +15,11 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+/**
+ * Configuration de la secutite de l'application, definit l'acces aux ressources de l'application ainsi
+ * que la strategie de gestion statless du serveur.
+ *
+ */
 @Configuration
 public class SecurityConfig {
 
@@ -52,7 +57,7 @@ public class SecurityConfig {
      *
      * @param authConfig configuration automatique de spring secutity
      * @return l'authenticationManager utilise pour traiter les tentatives de connexion
-     * @throws Exception
+     * @throws Exception si la configuration echoue
      */
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration authConfig) throws Exception {

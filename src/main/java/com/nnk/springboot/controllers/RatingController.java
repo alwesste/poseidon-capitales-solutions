@@ -7,6 +7,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -15,7 +16,11 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import java.util.Collection;
 
+/**
+ * Controleur Spring MVC gérant les objets rating
+ */
 @Controller
 public class RatingController {
 
@@ -25,7 +30,7 @@ public class RatingController {
     private RatingService ratingService;
 
     /**
-     *
+     * Affiche la liste complète des Rating
      * @param model
      * @param authentication
      * @return la vue rating/list
@@ -35,12 +40,16 @@ public class RatingController {
 
         model.addAttribute("ratings", ratingService.findAll());
         model.addAttribute("username", authentication.getName());
+        Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
+
+        boolean isAdmin = authorities.stream().anyMatch(auth -> auth.getAuthority().equals("ROLE_ADMIN"));
+        model.addAttribute("isAdmin", isAdmin);
 
         return "rating/list";
     }
 
     /**
-     *
+     * Affiche le formulaire de création de nouveau Rating
      * @param rating
      * @return la vue rating/add
      */
@@ -50,7 +59,7 @@ public class RatingController {
     }
 
     /**
-     *
+     * Valide et persiste un nouveau Rating.
      * @param rating
      * @param result
      * @param model
@@ -70,7 +79,7 @@ public class RatingController {
     }
 
     /**
-     *
+     * Affiche le formulaire de modification pour un Rating existante.
      * @param id
      * @param model
      * @return la vue rating/update apres mise a jour de rating via son Id
@@ -85,7 +94,7 @@ public class RatingController {
     }
 
     /**
-     *
+     * Traite la mise à jour d'un nouveau Rating existant en base de donnees
      * @param id
      * @param rating
      * @param result
@@ -112,7 +121,7 @@ public class RatingController {
     }
 
     /**
-     *
+     * Supprime un Rating par son identifiant "id".
      * @param id
      * @param model
      * @return la vue rating/list apres suppression d'un rating via son Id

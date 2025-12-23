@@ -16,6 +16,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
+/**
+ * Controleur gerant le processus d'authentification des utilisateurs.
+ * Ce contrôleur expose les points d'entrée pour l'affichage de la page de connexion,
+ */
 @Controller
 @RequestMapping("app")
 public class LoginController {
@@ -30,7 +34,7 @@ public class LoginController {
     private AuthenticationManager authenticationManager;
 
     /**
-     *
+     * Affiche le formulaire de connexion.
      * @return la page de login
      */
     @GetMapping("login")
@@ -41,10 +45,10 @@ public class LoginController {
     }
 
     /**
-     *
-     * @param username
-     * @param password
-     * @param httpServletResponse
+     * Traite la tentative de connexion utilisateur
+     * @param username, le nom d'utilisateur saisi
+     * @param password,lLe mot de passe saisi
+     * @param httpServletResponse l'objet de reponse permettant de recuperer le cookie
      * @return la vue "home" apres generation d'un token jwt et en le placant dans un cookie
      */
     @PostMapping("signin")
@@ -68,7 +72,7 @@ public class LoginController {
 
 
     /**
-     *
+     * Donne la liste des utilisateurs
      * @return la vue user/list apres avoir ajoute les utilisateurs sous le nom
      * "users" dans le model
      */
@@ -81,7 +85,7 @@ public class LoginController {
     }
 
     /**
-     *
+     * Affichage d'une page d'erreur personnalisee
      * @param model
      * @param authentication
      * @return une page d'erreur si une erreur est apparue

@@ -7,6 +7,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -15,7 +16,11 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import java.util.Collection;
 
+/**
+ * Contrôleur gérant les opérations relatives aux transactions (Trade)
+ */
 @Controller
 public class TradeController {
 
@@ -25,7 +30,7 @@ public class TradeController {
     private TradeService tradeService;
 
     /**
-     *
+     * Affiche la liste de tous les trades enregistres
      * @param model
      * @param authentication
      * @return la vue trade/list
@@ -34,11 +39,15 @@ public class TradeController {
     public String home(Model model, Authentication authentication) {
         model.addAttribute("username", authentication.getName());
         model.addAttribute("trades", tradeService.findAll());
+        Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
+
+        boolean isAdmin = authorities.stream().anyMatch(auth -> auth.getAuthority().equals("ROLE_ADMIN"));
+        model.addAttribute("isAdmin", isAdmin);
         return "trade/list";
     }
 
     /**
-     *
+     * Affiche le formulaire de creation d'un nouveau trade.
      * @param bid
      * @return la vue trade/add
      */
@@ -48,7 +57,7 @@ public class TradeController {
     }
 
     /**
-     *
+     * Valide et enregistre un nouveau trade dans le système
      * @param trade
      * @param result
      * @param model
@@ -68,7 +77,7 @@ public class TradeController {
     }
 
     /**
-     *
+     * Affiche le formulaire de modification d'un trade existant.
      * @param id
      * @param model
      * @return la vue trade/update via l'id de trade
@@ -81,7 +90,7 @@ public class TradeController {
     }
 
     /**
-     *
+     * Traite la mise à jour d'un trade existant.
      * @param id
      * @param trade
      * @param result
@@ -103,7 +112,7 @@ public class TradeController {
     }
 
     /**
-     *
+     * Supprime un trade de la base de données
      * @param id
      * @param model
      * @return la vue trade/list apres suppression du trade via son Id
