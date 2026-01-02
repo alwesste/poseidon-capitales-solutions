@@ -24,6 +24,10 @@
 2. Create repository class and place in package com.nnk.springboot.repositories
 3. Create controller class and place in package com.nnk.springboot.controllers
 
+## Url to start the application
+
+1. http://localhost:8080/app/login
+
 ## Auteur
 
 Leopold Dagorn
