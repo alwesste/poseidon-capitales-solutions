@@ -1,8 +1,8 @@
 package com.nnk.springboot.controllers;
 
 import com.nnk.springboot.repositories.UserRepository;
+import com.nnk.springboot.services.impl.AuthService;
 import com.nnk.springboot.services.impl.JWTService;
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -28,7 +28,7 @@ public class LoginController {
     private UserRepository userRepository;
 
     @Autowired
-    private JWTService jwtService;
+    private AuthService authService;
 
     @Autowired
     private AuthenticationManager authenticationManager;
@@ -61,15 +61,9 @@ public class LoginController {
                 new UsernamePasswordAuthenticationToken(username, password)
         );
 
-        String token = jwtService.generateToken(authentication);
-        Cookie tokenCookie = new Cookie("jwt", token);
-        tokenCookie.setHttpOnly(true);
-        tokenCookie.setPath("/");
-        tokenCookie.setMaxAge(24 * 60 * 60);
-        httpServletResponse.addCookie(tokenCookie);
+        authService.authenticateUserWithJWT(authentication, httpServletResponse);
         return "redirect:/";
     }
-
 
     /**
      * Donne la liste des utilisateurs

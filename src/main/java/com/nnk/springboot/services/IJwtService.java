@@ -13,6 +13,13 @@ public interface IJwtService {
 
     /**
      *
+     * @param username les infortions de l'utilisateur
+     * @return un token avec le nom, date d'expiration, cle hasher
+     */
+    public String generateToken(String username);
+
+    /**
+     *
      * @param token, le Token JWT a verifier
      * @return le username associe au token jwt
      */
