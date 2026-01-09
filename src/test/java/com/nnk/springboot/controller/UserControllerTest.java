@@ -113,4 +113,21 @@ public class UserControllerTest {
         assertEquals("newUsername", user.getUsername());
         assertEquals("newFullname", user.getFullname());
     }
+
+    @Test
+    @WithMockUser(username = "admin", roles = "ADMIN")
+    void shouldReturnLoginPageAfterRegister() throws Exception {
+        mockMvc.perform(post("/user/validateSignIn")
+                        .with(csrf())
+                        .param("username", "newUsername2")
+                        .param("password", "newPassword2!")
+                        .param("fullname", "newFullname2")
+                        .param("role", "ADMIN"))
+                .andExpect(status().is3xxRedirection());
+
+        User user = userRepository.findByUsername("newUsername2").orElseThrow();
+        assertEquals("newUsername2", user.getUsername());
+        assertEquals("newFullname2", user.getFullname());
+
+    }
 }

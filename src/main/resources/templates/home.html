@@ -19,6 +19,9 @@
             <a href="/ruleName/list">Rule</a>
         </div>
     </div>
+    <div th:if="${welcomeMessage}" class="alert alert-success mt-3">
+        <p th:text="${welcomeMessage}"></p>
+    </div>
 </div>
 </body>
 </html>
