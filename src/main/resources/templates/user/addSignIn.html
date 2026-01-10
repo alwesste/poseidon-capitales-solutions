@@ -45,10 +45,16 @@
                 </div>
             </div>
 
+            <div class="row" th:if="${error}">
+                <div class="alert alert-danger" role="alert">
+                    <span th:text="${error}"></span>
+                </div>
+            </div>
+
 
             <div class="form-group">
                 <div class="col-sm-12">
-                    <a class="btn btn-danger btn-sm" href="/user/list">Cancel</a>
+                    <a class="btn btn-danger btn-sm" href="/app/login">Cancel</a>
                     <input class="btn btn-primary btn-sm" type="submit" value="Add user">
                 </div>
             </div>
