@@ -89,8 +89,9 @@ public class UserController {
             logger.info("Utilisateur créé avec succès: {}", user.getUsername());
             return "redirect:/user/list";
 
-        } catch (Exception e) {
+        } catch (IllegalArgumentException e) {
             logger.error("Erreur lors de la sauvegarde de l'utilisateur", e);
+            model.addAttribute("error", "Une erreur est survenu, veuillez réessayer ulterieurement");
             return "user/add";
         }
     }
@@ -110,18 +111,21 @@ public class UserController {
         if (result.hasErrors()) {
             logger.warn("Erreurs de validation pour l'utilisateur {}: {}",
                     user.getUsername(), result.getAllErrors());
-            return "user/add";
+            return "user/addSignIn";
         }
         try {
+
             User savedUser = userService.save(user);
             logger.info("Utilisateur créé avec succès: {}", user.getUsername());
             authService.authenticateUserWithJWT(savedUser, response);
             redirectAttributes.addFlashAttribute(
                     "welcomeMessage", "Vous vous êtes bien enregistré"
             );            return "redirect:/";
-        } catch (Exception e) {
+
+        } catch (IllegalArgumentException  e) {
             logger.error("Erreur lors de la sauvegarde de l'utilisateur", e);
-            return "user/add";
+            model.addAttribute("error", "Une erreur est survenu, veuillez réessayer ulterieurement");
+            return "user/addSignIn";
         }
     }
 
