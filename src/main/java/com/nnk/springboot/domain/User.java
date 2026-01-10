@@ -19,6 +19,7 @@ public class User {
             message = "Le mot de passe doit contenir au moins 8 caracteres, un chiffre, une majuscule et un symbole special")
     private String password;
     @NotBlank(message = "FullName is mandatory")
+    @Column(unique = true)
     private String fullname;
     @NotBlank(message = "Role is mandatory")
     private String role;

@@ -28,6 +28,9 @@ public class UserService {
     }
 
     public User save(User user) {
+        if (userRepository.existsByFullname(user.getFullname())) {
+            throw new IllegalArgumentException("Le fullname est deja utilise");
+        }
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         return userRepository.save(user);
     }
